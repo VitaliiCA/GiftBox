@@ -6,10 +6,13 @@ import { Card, CardContent, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
 import { useToast } from '../hooks/use-toast';
 import { mockProducts } from '../mock';
+import CartModal from './CartModal';
 
 const GiftBoxCatalog = () => {
   const [wishlist, setWishlist] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -31,9 +34,79 @@ const GiftBoxCatalog = () => {
     }
   };
 
+  const addToCart = (product, quantity = 1, deliveryDate = null, giftMessage = '') => {
+    const existingItem = cart.find(item => item.id === product.id);
+    if (existingItem) {
+      setCart(cart.map(item => 
+        item.id === product.id 
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
+      ));
+    } else {
+      setCart([...cart, { 
+        ...product, 
+        quantity, 
+        deliveryDate: deliveryDate || '2025 Jan 2nd',
+        giftMessage: giftMessage || ''
+      }]);
+    }
+    
+    toast({
+      title: "Added to Cart! 🛒",
+      description: `${product.name} has been added to your cart.`,
+      variant: "default",
+    });
+  };
+
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+    
+    setCart(cart.map(item => 
+      item.id === productId 
+        ? { ...item, quantity: newQuantity }
+        : item
+    ));
+  };
+
+  const removeFromCart = (productId) => {
+    setCart(cart.filter(item => item.id !== productId));
+    toast({
+      title: "Removed from Cart",
+      description: "Item has been removed from your cart.",
+      variant: "default",
+    });
+  };
+
+  const handleCheckout = () => {
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const tax = total * 0.13;
+    const grandTotal = total + tax;
+    
+    toast({
+      title: "Order Placed Successfully! 🎉",
+      description: `Thank you! Your order totaling $${grandTotal.toFixed(2)} has been placed. You'll receive a confirmation email shortly.`,
+      variant: "default",
+    });
+    
+    setCart([]);
+    setIsCartOpen(false);
+  };
+
+  const getCartItemCount = () => {
+    return cart.reduce((total, item) => total + item.quantity, 0);
+  };
+
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
   };
+
+  // Make addToCart available globally for ProductPage component
+  React.useEffect(() => {
+    window.addToCart = addToCart;
+  }, [cart]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-color--accent--coconut to-white">
@@ -78,8 +151,18 @@ const GiftBoxCatalog = () => {
               <Button variant="ghost" size="sm">
                 <User className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative"
+                onClick={() => setIsCartOpen(true)}
+              >
                 <ShoppingCart className="h-4 w-4" />
+                {getCartItemCount() > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs" style={{ backgroundColor: 'var(--color--identity--red)' }}>
+                    {getCartItemCount()}
+                  </Badge>
+                )}
               </Button>
               
               {/* Mobile menu button */}
@@ -315,6 +398,16 @@ const GiftBoxCatalog = () => {
           </div>
         </div>
       </footer>
+
+      {/* Cart Modal */}
+      <CartModal 
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cart}
+        updateQuantity={updateQuantity}
+        removeFromCart={removeFromCart}
+        onCheckout={handleCheckout}
+      />
     </div>
   );
 };

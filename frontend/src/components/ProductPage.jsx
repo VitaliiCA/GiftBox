@@ -7,7 +7,7 @@ import { Badge } from './ui/badge';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useToast } from '../hooks/use-toast';
-import { mockProducts, mockCartOperations } from '../mock';
+import { mockProducts } from '../mock';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -16,7 +16,6 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [deliveryDate, setDeliveryDate] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('Jan');
   const [selectedDay, setSelectedDay] = useState('2');
@@ -51,14 +50,21 @@ const ProductPage = () => {
   const handleAddToCart = () => {
     if (!product) return;
     
-    const result = mockCartOperations.addToCart(product, quantity);
-    if (result.success) {
-      toast({
-        title: "Added to Cart! 🛒",
-        description: `${product.name} (Qty: ${quantity}) has been added to your cart.`,
-        variant: "default",
-      });
+    const deliveryDate = `${selectedYear} ${selectedMonth} ${selectedDay}${getOrdinalSuffix(selectedDay)}`;
+    
+    // Use the global addToCart function from the catalog component
+    if (window.addToCart) {
+      window.addToCart(product, quantity, deliveryDate, giftMessage);
     }
+  };
+
+  const getOrdinalSuffix = (day) => {
+    const j = day % 10;
+    const k = day % 100;
+    if (j === 1 && k !== 11) return 'st';
+    if (j === 2 && k !== 12) return 'nd';
+    if (j === 3 && k !== 13) return 'rd';
+    return 'th';
   };
 
   const handleAddToWishlist = () => {
@@ -71,19 +77,24 @@ const ProductPage = () => {
   };
 
   const handleBuyNow = () => {
-    const result = mockCartOperations.addToCart(product, quantity);
-    if (result.success) {
-      toast({
-        title: "Order Placed Successfully! 🎉",
-        description: `Thank you! Your order for ${product.name} (Qty: ${quantity}) totaling $${(product.price * quantity).toFixed(2)} has been placed. Delivery date: ${selectedMonth} ${selectedDay}, ${selectedYear}.`,
-        variant: "default",
-      });
-      
-      // Mock redirect to checkout
-      setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 3000);
+    const deliveryDate = `${selectedYear} ${selectedMonth} ${selectedDay}${getOrdinalSuffix(selectedDay)}`;
+    
+    // Add to cart first
+    if (window.addToCart) {
+      window.addToCart(product, quantity, deliveryDate, giftMessage);
     }
+    
+    // Show success message
+    toast({
+      title: "Order Placed Successfully! 🎉",
+      description: `Thank you! Your order for ${product.name} (Qty: ${quantity}) totaling $${(product.price * quantity * 1.13).toFixed(2)} (including HST) has been placed. Delivery date: ${deliveryDate}.`,
+      variant: "default",
+    });
+    
+    // Redirect to catalog after a short delay
+    setTimeout(() => {
+      navigate('/', { replace: true });
+    }, 3000);
   };
 
   if (!product) {

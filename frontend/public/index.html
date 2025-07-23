@@ -3,22 +3,97 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="description" content="A product of emergent.sh" />
-        <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-        <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-        <title>Emergent | Fullstack App</title>
+        <meta name="theme-color" content="#61525a" />
+        
+        <!-- SEO Meta Tags for Ottawa Gift Boxes -->
+        <title>Ottawa Gift Boxes | Premium Gift Baskets & Boxes Delivery Ottawa, Ontario</title>
+        <meta name="description" content="Premium gift boxes and baskets delivered throughout Ottawa, Ontario. Same-day delivery available. Perfect for corporate gifts, special occasions, birthdays, and celebrations. Local Ottawa artisans and quality products." />
+        <meta name="keywords" content="Ottawa gift boxes, Ottawa gift baskets, Ottawa gift delivery, same day delivery Ottawa, corporate gifts Ottawa, premium gift boxes Ontario, custom gift baskets, personalized gifts Ottawa, luxury gift boxes Canada" />
+        <meta name="author" content="Ottawa Gift Boxes" />
+        <meta name="robots" content="index, follow" />
+        <meta name="geo.region" content="CA-ON" />
+        <meta name="geo.placename" content="Ottawa" />
+        <meta name="geo.position" content="45.4215;-75.6972" />
+        <meta name="ICBM" content="45.4215, -75.6972" />
+        
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:title" content="Ottawa Gift Boxes | Premium Gift Baskets Delivery" />
+        <meta property="og:description" content="Premium gift boxes and baskets delivered throughout Ottawa, Ontario. Same-day delivery available." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="%PUBLIC_URL%" />
+        <meta property="og:site_name" content="Ottawa Gift Boxes" />
+        <meta property="og:locale" content="en_CA" />
+        <meta property="og:image" content="%PUBLIC_URL%/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Premium gift boxes and baskets from Ottawa Gift Boxes" />
+        
+        <!-- Twitter Card Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Ottawa Gift Boxes | Premium Gift Baskets Delivery" />
+        <meta name="twitter:description" content="Premium gift boxes and baskets delivered throughout Ottawa, Ontario. Same-day delivery available." />
+        <meta name="twitter:image" content="%PUBLIC_URL%/og-image.jpg" />
+        
+        <!-- Canonical URL -->
+        <link rel="canonical" href="%PUBLIC_URL%" />
+        
+        <!-- JSON-LD Structured Data -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "Ottawa Gift Boxes",
+          "description": "Premium gift boxes and baskets delivered throughout Ottawa, Ontario",
+          "url": "%PUBLIC_URL%",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Ottawa",
+            "addressRegion": "Ontario",
+            "addressCountry": "Canada"
+          },
+          "telephone": "(613) 555-4438",
+          "email": "hello@ottawagiftboxes.ca",
+          "priceRange": "$45-$200",
+          "paymentAccepted": "Cash, Credit Card",
+          "currenciesAccepted": "CAD",
+          "openingHours": [
+            "Mo-Fr 09:00-18:00",
+            "Sa-Su 10:00-16:00"
+          ],
+          "serviceArea": {
+            "@type": "GeoCircle",
+            "geoMidpoint": {
+              "@type": "GeoCoordinates",
+              "latitude": 45.4215,
+              "longitude": -75.6972
+            },
+            "geoRadius": "50000"
+          },
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Gift Boxes & Baskets",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Product",
+                  "name": "Premium Gift Boxes",
+                  "description": "Curated luxury gift boxes for all occasions"
+                }
+              }
+            ]
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "127"
+          }
+        }
+        </script>
+        
+        <!-- Preconnect to external domains for performance -->
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>

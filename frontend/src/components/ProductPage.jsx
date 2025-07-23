@@ -1,0 +1,409 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Heart, Star, ChevronLeft, ChevronRight, Calendar, MessageSquare, Package } from 'lucide-react';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
+import { Badge } from './ui/badge';
+import { Textarea } from './ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { useToast } from '../hooks/use-toast';
+import { mockProducts, mockCartOperations } from '../mock';
+
+const ProductPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [product, setProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [deliveryDate, setDeliveryDate] = useState('');
+  const [giftMessage, setGiftMessage] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('Jan');
+  const [selectedDay, setSelectedDay] = useState('2');
+  const [selectedYear, setSelectedYear] = useState('2025');
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  useEffect(() => {
+    const foundProduct = mockProducts.find(p => p.id === parseInt(id));
+    if (foundProduct) {
+      setProduct(foundProduct);
+      // Set SEO meta tags
+      document.title = `${foundProduct.name} - Ottawa Gift Boxes | Premium Gift Baskets Ottawa`;
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute('content', `${foundProduct.description} - Premium gift boxes and baskets delivery in Ottawa, Ontario. $${foundProduct.price}`);
+      }
+    }
+  }, [id]);
+
+  const nextImage = () => {
+    if (product) {
+      setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (product) {
+      setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    const result = mockCartOperations.addToCart(product, quantity);
+    if (result.success) {
+      toast({
+        title: "Added to Cart! 🛒",
+        description: `${product.name} (Qty: ${quantity}) has been added to your cart.`,
+        variant: "default",
+      });
+    }
+  };
+
+  const handleAddToWishlist = () => {
+    setIsWishlisted(!isWishlisted);
+    toast({
+      title: isWishlisted ? "Removed from Wishlist" : "Added to Wishlist! 💖",
+      description: isWishlisted ? "Item removed from your wishlist." : "Item added to your wishlist.",
+      variant: "default",
+    });
+  };
+
+  const handleBuyNow = () => {
+    const result = mockCartOperations.addToCart(product, quantity);
+    if (result.success) {
+      toast({
+        title: "Order Placed Successfully! 🎉",
+        description: `Thank you! Your order for ${product.name} (Qty: ${quantity}) totaling $${(product.price * quantity).toFixed(2)} has been placed. Delivery date: ${selectedMonth} ${selectedDay}, ${selectedYear}.`,
+        variant: "default",
+      });
+      
+      // Mock redirect to checkout
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 3000);
+    }
+  };
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-color--accent--coconut to-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-text--text-light mb-4">Product not found</h2>
+          <Button onClick={() => navigate('/')} style={{ backgroundColor: 'var(--accent--ui-accent)', color: 'var(--text--text-dark)' }}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Catalog
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-color--accent--coconut to-white">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-color--accent--line">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')}
+                className="text-text--base hover:text-accent--ui-accent"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Catalog
+              </Button>
+              <div className="h-6 w-px bg-color--accent--line"></div>
+              <h1 className="text-2xl font-bold" style={{ color: 'var(--accent--ui-accent)', fontFamily: 'Dbsharpgroteskvariable Vf, Arial, sans-serif' }}>
+                Ottawa Gift Boxes
+              </h1>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Product Images */}
+          <div className="space-y-4">
+            <div className="relative aspect-square bg-white rounded-lg shadow-lg overflow-hidden">
+              <img 
+                src={product.images[currentImageIndex]} 
+                alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                className="w-full h-full object-cover"
+              />
+              {product.images.length > 1 && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
+                    onClick={prevImage}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white"
+                    onClick={nextImage}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                  
+                  {/* Image indicators */}
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    {product.images.map((_, index) => (
+                      <button
+                        key={index}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                        }`}
+                        onClick={() => setCurrentImageIndex(index)}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              
+              {product.originalPrice && (
+                <Badge 
+                  className="absolute top-4 left-4 text-white"
+                  style={{ backgroundColor: 'var(--color--identity--red)' }}
+                >
+                  Save ${(product.originalPrice - product.price).toFixed(0)}
+                </Badge>
+              )}
+            </div>
+            
+            {/* Thumbnail images */}
+            {product.images.length > 1 && (
+              <div className="flex space-x-2 overflow-x-auto">
+                {product.images.map((image, index) => (
+                  <button
+                    key={index}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+                      index === currentImageIndex 
+                        ? 'border-accent--ui-accent' 
+                        : 'border-color--accent--line hover:border-accent--ui-accent'
+                    }`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`${product.name} thumbnail ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Product Details */}
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <Badge 
+                  variant="outline" 
+                  className="text-sm"
+                  style={{ borderColor: 'var(--color--accent--line)', color: 'var(--text--text-subtle-light)' }}
+                >
+                  {product.category}
+                </Badge>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleAddToWishlist}
+                  className={`${isWishlisted ? 'text-red-500' : 'text-gray-600'}`}
+                >
+                  <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
+                </Button>
+              </div>
+              
+              <h1 className="text-3xl font-bold mb-4" style={{ color: 'var(--text--text-light)', fontFamily: 'Dbsharpgroteskvariable Vf, Arial, sans-serif' }}>
+                {product.name}
+              </h1>
+              
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-3xl font-bold" style={{ color: 'var(--accent--ui-accent)' }}>
+                    ${product.price.toFixed(2)}
+                  </span>
+                  {product.originalPrice && (
+                    <span className="text-lg text-text--text-subtle-light line-through">
+                      ${product.originalPrice.toFixed(2)}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm font-medium">{product.rating}</span>
+                  <span className="text-sm text-text--text-subtle-light">(127 reviews)</span>
+                </div>
+              </div>
+              
+              <p className="text-text--text-subtle-light leading-relaxed">
+                {product.description}
+              </p>
+            </div>
+
+            {/* Delivery Date Selection */}
+            <Card className="border-color--accent--line">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Calendar className="w-5 h-5 text-accent--ui-accent" />
+                  <h3 className="font-semibold" style={{ color: 'var(--text--text-light)' }}>
+                    Requested Delivery Date (Monday-Friday): *
+                  </h3>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Jan">Jan</SelectItem>
+                      <SelectItem value="Feb">Feb</SelectItem>
+                      <SelectItem value="Mar">Mar</SelectItem>
+                      <SelectItem value="Apr">Apr</SelectItem>
+                      <SelectItem value="May">May</SelectItem>
+                      <SelectItem value="Jun">Jun</SelectItem>
+                      <SelectItem value="Jul">Jul</SelectItem>
+                      <SelectItem value="Aug">Aug</SelectItem>
+                      <SelectItem value="Sep">Sep</SelectItem>
+                      <SelectItem value="Oct">Oct</SelectItem>
+                      <SelectItem value="Nov">Nov</SelectItem>
+                      <SelectItem value="Dec">Dec</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <Select value={selectedDay} onValueChange={setSelectedDay}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 31 }, (_, i) => (
+                        <SelectItem key={i + 1} value={String(i + 1)}>
+                          {i + 1}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  
+                  <Select value={selectedYear} onValueChange={setSelectedYear}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2025">2025</SelectItem>
+                      <SelectItem value="2026">2026</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Gift Message */}
+            <Card className="border-color--accent--line">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <MessageSquare className="w-5 h-5 text-accent--ui-accent" />
+                  <h3 className="font-semibold" style={{ color: 'var(--text--text-light)' }}>
+                    Gift Message (Includes Standard Greeting Card): *
+                  </h3>
+                </div>
+                <Textarea
+                  placeholder="Enter your personalized gift message here..."
+                  value={giftMessage}
+                  onChange={(e) => setGiftMessage(e.target.value)}
+                  className="min-h-[100px] border-color--accent--line"
+                />
+              </CardContent>
+            </Card>
+
+            {/* Quantity and Actions */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Package className="w-5 h-5 text-accent--ui-accent" />
+                <label className="font-semibold" style={{ color: 'var(--text--text-light)' }}>
+                  Quantity:
+                </label>
+              </div>
+              <Select value={String(quantity)} onValueChange={(value) => setQuantity(parseInt(value))}>
+                <SelectTrigger className="w-24">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <SelectItem key={i + 1} value={String(i + 1)}>
+                      {i + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <Button 
+                className="w-full py-3 text-lg font-semibold transition-all duration-200 transform hover:scale-105"
+                style={{ 
+                  backgroundColor: 'var(--text--text-light)',
+                  color: 'var(--text--text-dark)'
+                }}
+                onClick={handleAddToCart}
+                disabled={!product.inStock}
+              >
+                ADD TO CART
+              </Button>
+              
+              <Button 
+                className="w-full py-3 text-lg font-semibold transition-all duration-200 transform hover:scale-105"
+                style={{ 
+                  backgroundColor: 'var(--color--identity--red)',
+                  color: 'var(--text--text-dark)'
+                }}
+                onClick={handleBuyNow}
+                disabled={!product.inStock}
+              >
+                BUY NOW
+              </Button>
+            </div>
+
+            {/* Product Info */}
+            <Card className="border-color--accent--line">
+              <CardContent className="p-6">
+                <div className="space-y-3 text-sm text-text--text-subtle-light">
+                  <div className="flex justify-between">
+                    <span>Delivery Area:</span>
+                    <span className="font-medium">Ottawa & Surrounding Areas</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Processing Time:</span>
+                    <span className="font-medium">1-2 Business Days</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Free Shipping:</span>
+                    <span className="font-medium">Orders over $100</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Availability:</span>
+                    <span className={`font-medium ${product.inStock ? 'text-green-600' : 'text-red-600'}`}>
+                      {product.inStock ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default ProductPage;

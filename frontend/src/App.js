@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import GiftBoxCatalog from "./components/GiftBoxCatalog";
 import ProductPage from "./components/ProductPage";
 import { Toaster } from "./components/ui/toaster";
+import { CartProvider } from "./components/CartContext";
 
 function App() {
   useEffect(() => {
@@ -132,15 +133,17 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<GiftBoxCatalog />} />
-          <Route path="/product/:id" element={<ProductPage />} />
-        </Routes>
-      </BrowserRouter>
-      <Toaster />
-    </div>
+    <CartProvider>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<GiftBoxCatalog />} />
+            <Route path="/product/:id" element={<ProductPage />} />
+          </Routes>
+        </BrowserRouter>
+        <Toaster />
+      </div>
+    </CartProvider>
   );
 }
 

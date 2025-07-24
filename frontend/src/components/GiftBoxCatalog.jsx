@@ -7,14 +7,15 @@ import { Badge } from './ui/badge';
 import { useToast } from '../hooks/use-toast';
 import { mockProducts } from '../mock';
 import CartModal from './CartModal';
+import { useCart } from './CartContext';
 
 const GiftBoxCatalog = () => {
   const [wishlist, setWishlist] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { cart, addToCart, updateQuantity, removeFromCart, clearCart, getCartItemCount } = useCart();
 
   const toggleWishlist = (productId) => {
     if (wishlist.includes(productId)) {
@@ -34,56 +35,10 @@ const GiftBoxCatalog = () => {
     }
   };
 
-  const addToCart = (product, quantity = 1, deliveryDate = null, giftMessage = '') => {
-    const existingItem = cart.find(item => item.id === product.id);
-    if (existingItem) {
-      setCart(cart.map(item => 
-        item.id === product.id 
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      ));
-    } else {
-      setCart([...cart, { 
-        ...product, 
-        quantity, 
-        deliveryDate: deliveryDate || '2025 Jan 2nd',
-        giftMessage: giftMessage || ''
-      }]);
-    }
-    
-    toast({
-      title: "Added to Cart! 🛒",
-      description: `${product.name} has been added to your cart.`,
-      variant: "default",
-    });
-  };
-
-  const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-    
-    setCart(cart.map(item => 
-      item.id === productId 
-        ? { ...item, quantity: newQuantity }
-        : item
-    ));
-  };
-
-  const removeFromCart = (productId) => {
-    setCart(cart.filter(item => item.id !== productId));
-    toast({
-      title: "Removed from Cart",
-      description: "Item has been removed from your cart.",
-      variant: "default",
-    });
-  };
-
   const handleCheckout = () => {
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const tax = total * 0.13;
-    const grandTotal = total + tax;
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const tax = subtotal * 0.13;
+    const grandTotal = subtotal + tax;
     
     toast({
       title: "Order Placed Successfully! 🎉",
@@ -91,22 +46,13 @@ const GiftBoxCatalog = () => {
       variant: "default",
     });
     
-    setCart([]);
+    clearCart();
     setIsCartOpen(false);
-  };
-
-  const getCartItemCount = () => {
-    return cart.reduce((total, item) => total + item.quantity, 0);
   };
 
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
   };
-
-  // Make addToCart available globally for ProductPage component
-  React.useEffect(() => {
-    window.addToCart = addToCart;
-  }, [cart]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-color--accent--coconut to-white">

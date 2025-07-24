@@ -8,11 +8,13 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useToast } from '../hooks/use-toast';
 import { mockProducts } from '../mock';
+import { useCart } from './CartContext';
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -47,17 +49,6 @@ const ProductPage = () => {
     }
   };
 
-  const handleAddToCart = () => {
-    if (!product) return;
-    
-    const deliveryDate = `${selectedYear} ${selectedMonth} ${selectedDay}${getOrdinalSuffix(selectedDay)}`;
-    
-    // Use the global addToCart function from the catalog component
-    if (window.addToCart) {
-      window.addToCart(product, quantity, deliveryDate, giftMessage);
-    }
-  };
-
   const getOrdinalSuffix = (day) => {
     const j = day % 10;
     const k = day % 100;
@@ -65,6 +56,20 @@ const ProductPage = () => {
     if (j === 2 && k !== 12) return 'nd';
     if (j === 3 && k !== 13) return 'rd';
     return 'th';
+  };
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    
+    const deliveryDate = `${selectedYear} ${selectedMonth} ${selectedDay}${getOrdinalSuffix(selectedDay)}`;
+    
+    addToCart(product, quantity, deliveryDate, giftMessage);
+    
+    toast({
+      title: "Added to Cart! 🛒",
+      description: `${product.name} (Qty: ${quantity}) has been added to your cart.`,
+      variant: "default",
+    });
   };
 
   const handleAddToWishlist = () => {
@@ -80,9 +85,7 @@ const ProductPage = () => {
     const deliveryDate = `${selectedYear} ${selectedMonth} ${selectedDay}${getOrdinalSuffix(selectedDay)}`;
     
     // Add to cart first
-    if (window.addToCart) {
-      window.addToCart(product, quantity, deliveryDate, giftMessage);
-    }
+    addToCart(product, quantity, deliveryDate, giftMessage);
     
     // Show success message
     toast({

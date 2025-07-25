@@ -155,21 +155,81 @@ const ProductPage = () => {
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-color--accent--line">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/')}
-                className="text-text--base hover:text-accent--ui-accent"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Catalog
-              </Button>
-              <div className="h-6 w-px bg-color--accent--line"></div>
+            {/* Logo */}
+            <div className="flex-shrink-0">
               <h1 className="text-2xl font-bold" style={{ color: 'var(--accent--ui-accent)', fontFamily: 'Dbsharpgroteskvariable Vf, Arial, sans-serif' }}>
                 Ottawa Gift Boxes
               </h1>
             </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-8">
+              <a href="#" onClick={() => navigate('/')} className="text-text--base hover:text-accent--ui-accent transition-colors duration-200 cursor-pointer">Shop</a>
+              <a href="#" className="text-text--base hover:text-accent--ui-accent transition-colors duration-200">Gift Baskets</a>
+              <a href="#" className="text-text--base hover:text-accent--ui-accent transition-colors duration-200">Corporate Gifts</a>
+              <a href="#" className="text-text--base hover:text-accent--ui-accent transition-colors duration-200">About Us</a>
+              <a href="#" className="text-text--base hover:text-accent--ui-accent transition-colors duration-200">Contact</a>
+            </nav>
+
+            {/* Header Actions */}
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm">
+                <Search className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative"
+                onClick={() => setWishlist([])}
+              >
+                <Heart className={`h-4 w-4 ${wishlist.length > 0 ? 'fill-red-500 text-red-500' : ''}`} />
+                {wishlist.length > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs bg-red-500">
+                    {wishlist.length}
+                  </Badge>
+                )}
+              </Button>
+              <Button variant="ghost" size="sm">
+                <User className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative"
+                onClick={() => setIsCartOpen(true)}
+              >
+                <ShoppingCart className="h-4 w-4" />
+                {getCartItemCount() > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs" style={{ backgroundColor: 'var(--color--identity--red)' }}>
+                    {getCartItemCount()}
+                  </Badge>
+                )}
+              </Button>
+              
+              {/* Mobile menu button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
+
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <div className="md:hidden py-4 border-t border-color--accent--line">
+              <nav className="flex flex-col space-y-2">
+                <a href="#" onClick={() => navigate('/')} className="text-text--base hover:text-accent--ui-accent transition-colors duration-200 py-2 cursor-pointer">Shop</a>
+                <a href="#" className="text-text--base hover:text-accent--ui-accent transition-colors duration-200 py-2">Gift Baskets</a>
+                <a href="#" className="text-text--base hover:text-accent--ui-accent transition-colors duration-200 py-2">Corporate Gifts</a>
+                <a href="#" className="text-text--base hover:text-accent--ui-accent transition-colors duration-200 py-2">About Us</a>
+                <a href="#" className="text-text--base hover:text-accent--ui-accent transition-colors duration-200 py-2">Contact</a>
+              </nav>
+            </div>
+          )}
         </div>
       </header>
 

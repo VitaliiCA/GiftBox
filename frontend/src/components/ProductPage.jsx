@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Star, ChevronLeft, ChevronRight, Calendar, MessageSquare, Package } from 'lucide-react';
+import { ArrowLeft, Heart, Star, ChevronLeft, ChevronRight, Calendar, MessageSquare, Package, ShoppingCart, Search, User, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useToast } from '../hooks/use-toast';
 import { mockProducts } from '../mock';
 import { useCart } from './CartContext';
+import CartModal from './CartModal';
 
 const ProductPage = () => {
   const { id } = useParams();

@@ -15,7 +15,7 @@ const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { cart, addToCart, updateQuantity, removeFromCart, clearCart, getCartItemCount } = useCart();
   const [product, setProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -24,6 +24,9 @@ const ProductPage = () => {
   const [selectedDay, setSelectedDay] = useState('2');
   const [selectedYear, setSelectedYear] = useState('2025');
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlist, setWishlist] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     const foundProduct = mockProducts.find(p => p.id === parseInt(id));

@@ -73,6 +73,8 @@ const ProductPage = () => {
     clearCart();
     setIsCartOpen(false);
   };
+
+  const nextImage = () => {
     if (product) {
       setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
     }

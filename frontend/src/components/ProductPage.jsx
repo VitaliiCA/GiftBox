@@ -41,7 +41,38 @@ const ProductPage = () => {
     }
   }, [id]);
 
-  const nextImage = () => {
+  const toggleWishlist = (productId) => {
+    if (wishlist.includes(productId)) {
+      setWishlist(wishlist.filter(id => id !== productId));
+      toast({
+        title: "Removed from Wishlist",
+        description: "Item has been removed from your wishlist.",
+        variant: "default",
+      });
+    } else {
+      setWishlist([...wishlist, productId]);
+      toast({
+        title: "Added to Wishlist!",
+        description: "Item has been added to your wishlist.",
+        variant: "default",
+      });
+    }
+  };
+
+  const handleCheckout = () => {
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const tax = subtotal * 0.13;
+    const grandTotal = subtotal + tax;
+    
+    toast({
+      title: "Order Placed Successfully! 🎉",
+      description: `Thank you! Your order totaling $${grandTotal.toFixed(2)} has been placed. You'll receive a confirmation email shortly.`,
+      variant: "default",
+    });
+    
+    clearCart();
+    setIsCartOpen(false);
+  };
     if (product) {
       setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
     }

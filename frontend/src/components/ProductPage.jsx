@@ -153,13 +153,17 @@ const ProductPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-color--accent--coconut to-white">
-      {/* Header */}
+      {/* Header - Same as main page */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-color--accent--line">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold" style={{ color: 'var(--accent--ui-accent)', fontFamily: 'Dbsharpgroteskvariable Vf, Arial, sans-serif' }}>
+              <h1 
+                className="text-2xl font-bold cursor-pointer" 
+                style={{ color: 'var(--accent--ui-accent)', fontFamily: 'Dbsharpgroteskvariable Vf, Arial, sans-serif' }}
+                onClick={() => navigate('/')}
+              >
                 Ottawa Gift Boxes
               </h1>
             </div>

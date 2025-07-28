@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import GiftBoxCatalog from "./components/GiftBoxCatalog";
 import ProductPage from "./components/ProductPage";
+import CheckoutPage from "./components/CheckoutPage";
 import { Toaster } from "./components/ui/toaster";
 import { CartProvider } from "./components/CartContext";
 
@@ -139,6 +140,7 @@ function App() {
           <Routes>
             <Route path="/" element={<GiftBoxCatalog />} />
             <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
           </Routes>
         </BrowserRouter>
         <Toaster />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -12,11 +13,18 @@ const CartModal = ({
   removeFromCart, 
   onCheckout 
 }) => {
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   const tax = subtotal * 0.13; // 13% HST for Ontario
   const grandTotal = subtotal + tax;
+
+  const handleCheckout = () => {
+    onClose();
+    navigate('/checkout');
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
@@ -172,12 +180,12 @@ const CartModal = ({
                   <Button 
                     className="w-full py-3 text-lg font-semibold transition-all duration-200 transform hover:scale-105"
                     style={{ 
-                      backgroundColor: 'var(--text--text-light)',
+                      backgroundColor: 'var(--color--identity--red)',
                       color: 'var(--text--text-dark)'
                     }}
-                    onClick={onCheckout}
+                    onClick={handleCheckout}
                   >
-                    CHECK OUT
+                    CHECKOUT
                   </Button>
                   
                   <Button 
@@ -189,7 +197,7 @@ const CartModal = ({
                       color: 'var(--accent--ui-accent)'
                     }}
                   >
-                    VIEW CART
+                    CONTINUE SHOPPING
                   </Button>
                 </div>
 
